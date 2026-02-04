@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tlias.paper0_1.mapper.UserMapper">
+
+    <!-- 定义User实体类与数据库字段的映射关系 -->
+    <resultMap id="userMap" type="com.tlias.paper0_1.entity.User">
+        <id column="id" property="id" />
+        <result column="username" property="username" />
+        <result column="password" property="password" />
+        <result column="email" property="email" />
+        <result column="avatar" property="avatar" />
+        <result column="nickname" property="nickname" />
+        <result column="signature" property="signature" />
+        <result column="role" property="role" />
+        <result column="created_at" property="created_at" />
+        <result column="updated_at" property="updated_at" />
+    </resultMap>
+
+    <!-- 根据用户名查询用户 -->
+    <select id="findByUsername" parameterType="String" resultMap="userMap">
+        SELECT id, username, password, email, avatar, nickname, signature, role, created_at, updated_at
+        FROM user
+        WHERE username = #{username}
+    </select>
+
+    <!-- 根据邮箱查询用户 -->
+    <select id="findByEmail" parameterType="String" resultMap="userMap">
+        SELECT id, username, password, email, avatar, nickname, signature, role, created_at, updated_at
+        FROM user
+        WHERE email = #{email}
+    </select>
+
+    <!-- 根据ID查询用户 -->
+    <select id="findById" parameterType="Long" resultMap="userMap">
+        SELECT id, username, password, email, avatar, nickname, signature, role, created_at, updated_at
+        FROM user
+        WHERE id = #{id}
+    </select>
+
+    <!-- 插入新用户 -->
+    <insert id="insert" parameterType="com.tlias.paper0_1.entity.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (username, password, email, avatar, nickname, signature, role, created_at, updated_at)
+        VALUES (#{username}, #{password}, #{email}, #{avatar}, #{nickname}, #{signature}, #{role}, #{created_at}, #{updated_at})
+    </insert>
+
+    <!-- 更新用户个人信息 -->
+    <update id="updateUserInfo">
+        UPDATE user
+        SET nickname = #{nickname}, signature = #{signature}, updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 更新用户头像 -->
+    <update id="updateAvatar">
+        UPDATE user
+        SET avatar = #{avatar}, updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 更新用户密码 -->
+    <update id="updatePassword">
+        UPDATE user
+        SET password = #{password}, updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+</mapper>

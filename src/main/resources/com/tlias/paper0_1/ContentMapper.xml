@@ -1,0 +1,96 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tlias.paper0_1.mapper.ContentMapper">
+    
+    <!-- 定义Content实体类与数据库字段的映射关系 -->
+    <resultMap id="contentMap" type="com.tlias.paper0_1.entity.Content">
+        <id column="video_id" property="video_id" />
+        <result column="video_type" property="video_type" />
+        <result column="title" property="title" />
+        <result column="description" property="description" />
+        <result column="create_time" property="create_time" />
+        <result column="user_id" property="user_id" />
+        <result column="nickname" property="nickname" />
+        <result column="avatar" property="avatar" />
+        <result column="video_url" property="video_url" />
+        <result column="video_cover_url" property="video_cover_url" />
+        <result column="liked_count" property="liked_count" />
+        <result column="disliked_count" property="disliked_count" />
+        <result column="video_play_count" property="video_play_count" />
+    </resultMap>
+    
+    <!-- 查询所有视频内容 -->
+    <select id="getAllContents" resultMap="contentMap">
+        select video_id, video_type, title, description, create_time, user_id, nickname, avatar, video_url, video_cover_url, liked_count, disliked_count, video_play_count
+        from video_data
+    </select>
+
+    <!-- 根据ID查询单个视频内容 -->
+    <select id="getContentById" parameterType="String" resultMap="contentMap">
+        select video_id, video_type, title, description, create_time, user_id, nickname, avatar, video_url, video_cover_url, liked_count, disliked_count, video_play_count
+        from video_data
+        where video_id = #{id}
+        limit 1
+    </select>
+
+    <!-- 分页查询视频内容 -->
+    <select id="getContentByPage" resultMap="contentMap">
+        select video_id, video_type, title, description, create_time, user_id, nickname, avatar, video_url, video_cover_url, liked_count, disliked_count, video_play_count
+        from video_data
+        order by create_time desc
+        limit #{offset}, #{size}
+    </select>
+
+    <!-- 查询视频内容总数 -->
+    <select id="getContentCount" resultType="long">
+        select count(*) from video_data
+    </select>
+
+    <!-- 根据标题模糊查询视频内容 -->
+    <select id="getContentByTitle" resultMap="contentMap">
+        select video_id, video_type, title, description, create_time, user_id, nickname, avatar, video_url, video_cover_url, liked_count, disliked_count, video_play_count
+        from video_data
+        where title LIKE CONCAT('%', #{title}, '%')
+        order by create_time desc
+    </select>
+
+    <!-- 根据标题模糊查询视频内容（分页） -->
+    <select id="getContentByTitleAndPage" resultMap="contentMap">
+        select video_id, video_type, title, description, create_time, user_id, nickname, avatar, video_url, video_cover_url, liked_count, disliked_count, video_play_count
+        from video_data
+        where title LIKE CONCAT('%', #{title}, '%')
+        order by create_time desc
+        limit #{offset}, #{size}
+    </select>
+
+    <!-- 根据标题查询视频内容总数 -->
+    <select id="getContentCountByTitle" resultType="long">
+        select count(*) from video_data
+        where title LIKE CONCAT('%', #{title}, '%')
+    </select>
+
+    <!-- 更新视频内容的点赞数量 -->
+    <update id="updateLikedCount">
+        UPDATE video_data
+        SET liked_count = liked_count + #{count}
+        WHERE video_id = #{videoId}
+    </update>
+    
+    <!-- 更新视频内容的不喜欢数量 -->
+    <update id="updateDislikedCount">
+        UPDATE video_data
+        SET disliked_count = disliked_count + #{count}
+        WHERE video_id = #{videoId}
+    </update>
+    
+    <!-- 获取热门视频列表（按点赞数排序） -->
+    <select id="getHotVideos" resultMap="contentMap">
+        select video_id, video_type, title, description, create_time, user_id, nickname, avatar, video_url, video_cover_url, liked_count, disliked_count, video_play_count
+        from video_data
+        order by liked_count desc, create_time desc
+        limit #{offset}, #{size}
+    </select>
+    
+</mapper>
