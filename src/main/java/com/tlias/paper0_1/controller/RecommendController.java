@@ -38,7 +38,7 @@ public class RecommendController {
     @GetMapping("/hot")
     public Content_Result<HotVideoResponse> getHotVideos(
             @RequestParam(defaultValue = "1") Integer currentPage,
-            @RequestParam(defaultValue = "10") Integer pageSize) {
+            @RequestParam(defaultValue = "12") Integer pageSize) {
         HotVideoResponse hotVideoResponse = contentService.getHotVideos(currentPage, pageSize);
         return Content_Result.success("获取热门视频成功", hotVideoResponse);
     }

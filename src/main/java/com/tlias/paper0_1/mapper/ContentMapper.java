@@ -107,4 +107,8 @@ public interface ContentMapper {
      * @return 热门视频内容列表
      */
     List<Content> getHotVideos(@Param("offset") int offset, @Param("size") int size);
+
+    List<Content> selectRandomVideos(@Param("count") int count, @Param("excludeIds") List<String> excludeIds);
+    
+    long getTotalVideoCount(@Param("excludeIds") List<String> excludeIds);
 }

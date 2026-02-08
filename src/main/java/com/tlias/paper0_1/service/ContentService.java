@@ -43,4 +43,13 @@ public interface ContentService {
     
     // 获取热门视频
     HotVideoResponse getHotVideos(int currentPage, int pageSize);
+
+    //获取随机视频
+    List<Content> getRandomVideos(int count, List<String> excludeIds);
+    
+    //获取视频总记录数（用于判断是否有更多数据）
+    long getTotalVideoCount(List<String> excludeIds);
+    
+    //获取随机视频（不排重）
+    List<Content> getRandomVideosWithoutExclude(int count);
 }

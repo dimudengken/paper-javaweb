@@ -1,11 +1,16 @@
 package com.tlias.paper0_1.controller;
 
+import com.tlias.paper0_1.entity.LoginInfo_Result;
 import com.tlias.paper0_1.entity.User_Result;
 import com.tlias.paper0_1.entity.User;
 import com.tlias.paper0_1.service.UserService;
+import com.tlias.paper0_1.tools.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 用户控制器类
@@ -28,13 +33,37 @@ public class UserController {
      * 用户登录
      * HTTP POST请求 /api/user/account/login
      * 验证用户名和密码，返回用户信息和令牌
-     * 
+     *
      * @param loginRequest 登录请求体，包含username和password
      * @return User_Result<User> 登录结果，包含用户信息和令牌
      */
     @PostMapping("/account/login")
-    public User_Result<User> login(@RequestBody LoginRequest loginRequest) {
-        return userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+    public User_Result<LoginInfo_Result> login(@RequestBody LoginRequest loginRequest) {
+        // 1. 调用 Service 进行登录校验 (如果失败，Service通常会抛异常或返回null)
+        User_Result<User> user = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+
+        if (user != null) {
+            // 2. 登录成功，生成 JWT Token
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("id", user.getData().getId());
+            claims.put("username", user.getData().getUsername());
+
+            // 假设你的 JwtUtil 生成方法是这样的
+            String token = JwtUtil.genToken(claims);
+            // 或者 String token = "Bearer " + JwtUtil.genToken(claims); (取决于前端是否自动加 Bearer)
+
+            // 3. 【关键步骤】封装返回数据
+            LoginInfo_Result loginInfo = new LoginInfo_Result();
+            loginInfo.setToken(token);
+            loginInfo.setUser(user.getData());
+
+            // 4. 返回包装好的对象
+            // 这里的 success 方法会自动将 loginInfo_Result 放入 "data" 字段
+            return User_Result.success("登录成功", loginInfo);
+        } else {
+            // 登录失败
+            return User_Result.error("用户名或密码错误");
+        }
     }
 
     /**

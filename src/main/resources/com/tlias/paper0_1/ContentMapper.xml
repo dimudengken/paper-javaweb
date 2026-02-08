@@ -92,5 +92,38 @@
         order by liked_count desc, create_time desc
         limit #{offset}, #{size}
     </select>
+
+    <!--随机查询视频-->
+    <select id="selectRandomVideos" resultMap="contentMap">
+        SELECT 
+        video_id, video_type, title, description, create_time, user_id, nickname, avatar, 
+        video_url, video_cover_url, liked_count, disliked_count, video_play_count
+        FROM video_data
+        <where>
+            <if test="excludeIds != null and excludeIds.size() > 0">
+                video_id NOT IN 
+                <foreach collection="excludeIds" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY RAND()
+        LIMIT #{count}
+    </select>
     
+    <!--获取视频总记录数（排除指定ID后）-->
+    <select id="getTotalVideoCount" resultType="long">
+        SELECT COUNT(*)
+        FROM video_data
+        <where>
+            <if test="excludeIds != null and excludeIds.size() > 0">
+                video_id NOT IN 
+                <foreach collection="excludeIds" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+
 </mapper>

@@ -65,4 +65,6 @@ public class User {
      * 更新时间 - 用户信息最后一次更新的时间
      */
     private LocalDateTime updated_at;
+
+
 }

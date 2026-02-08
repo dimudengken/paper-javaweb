@@ -226,4 +226,21 @@ public class ContentServiceImpl implements ContentService {
         // 返回热门视频响应对象
         return new HotVideoResponse(hotVideos, hasMore);
     }
+    @Override
+    public List<Content> getRandomVideos(int count, List<String> excludeIds) {
+        // 简单的随机算法：在数据库层面随机 (适合数据量不大时)
+        // SELECT * FROM t_video ORDER BY RAND() LIMIT #{count}
+        // 注意：数据量极大时 ORDER BY RAND() 性能较差，建议用 Java 随机生成 ID 列表再去查
+        return contentMapper.selectRandomVideos(count, excludeIds);
+    }
+    
+    @Override
+    public long getTotalVideoCount(List<String> excludeIds) {
+        return contentMapper.getTotalVideoCount(excludeIds);
+    }
+    
+    @Override
+    public List<Content> getRandomVideosWithoutExclude(int count) {
+        return contentMapper.selectRandomVideos(count, null);
+    }
 }

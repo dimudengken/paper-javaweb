@@ -1,8 +1,11 @@
 package com.tlias.paper0_1.mapper;
 
 import com.tlias.paper0_1.entity.User;
+import com.tlias.paper0_1.entity.Content;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 import java.time.LocalDateTime;
 
@@ -86,4 +89,28 @@ public interface UserMapper {
     void updatePassword(@Param("id") Long id, 
                         @Param("password") String password, 
                         @Param("updatedAt") LocalDateTime updatedAt);
+    
+    /**
+     * 获取用户收藏的视频列表
+     * 
+     * @param userId 用户ID
+     * @return 用户收藏的视频列表
+     */
+    List<Content> getFavoriteVideosByUserId(@Param("userId") Long userId);
+    
+    /**
+     * 获取用户上传的视频列表
+     * 
+     * @param userId 用户ID
+     * @return 用户上传的视频列表
+     */
+    List<Content> getUploadedVideosByUserId(@Param("userId") Long userId);
+    
+    /**
+     * 获取推荐给用户的视频列表
+     * 
+     * @param userId 用户ID
+     * @return 推荐的视频列表
+     */
+    List<Content> getRecommendedVideosByUserId(@Param("userId") Long userId);
 }
