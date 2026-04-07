@@ -111,4 +111,29 @@ public interface ContentMapper {
     List<Content> selectRandomVideos(@Param("count") int count, @Param("excludeIds") List<String> excludeIds);
     
     long getTotalVideoCount(@Param("excludeIds") List<String> excludeIds);
+    
+    // 更新视频统计数据
+    int updateVideoStats(
+        @Param("videoId") String videoId,
+        @Param("likedCount") long likedCount,
+        @Param("favoriteCount") long favoriteCount,
+        @Param("shareCount") long shareCount,
+        @Param("coinCount") long coinCount,
+        @Param("viewCount") long viewCount
+    );
+    
+    /**
+     * 获取收藏夹中的视频列表
+     */
+    List<Content> getFavoriteVideos(
+        @Param("favoriteId") Long favoriteId,
+        @Param("rule") Integer rule,
+        @Param("offset") int offset,
+        @Param("limit") int limit
+    );
+    
+    /**
+     * 统计收藏夹中的视频数量
+     */
+    long countFavoriteVideos(@Param("favoriteId") Long favoriteId);
 }

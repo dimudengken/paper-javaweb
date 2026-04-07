@@ -243,4 +243,25 @@ public class ContentServiceImpl implements ContentService {
     public List<Content> getRandomVideosWithoutExclude(int count) {
         return contentMapper.selectRandomVideos(count, null);
     }
+    
+    @Override
+    public PageResult<Content> getFavoriteVideos(Long favoriteId, Integer rule, Integer page, Integer quantity) {
+        int actualPage = Math.max(1, page);
+        int actualQuantity = Math.max(1, quantity);
+        int offset = (actualPage - 1) * actualQuantity;
+        
+        List<Content> videos = contentMapper.getFavoriteVideos(favoriteId, rule, offset, actualQuantity);
+        long totalCount = contentMapper.countFavoriteVideos(favoriteId);
+        int totalPages = (int) Math.ceil((double) totalCount / actualQuantity);
+        
+        PageResult<Content> result = new PageResult<>();
+        result.setItems(videos);
+        result.setTotal(totalCount);
+        result.setPageSize(actualQuantity);
+        result.setCurrentPage(actualPage);
+        result.setTotalPages(totalPages);
+        result.setHasNextPage(actualPage < totalPages);
+        
+        return result;
+    }
 }

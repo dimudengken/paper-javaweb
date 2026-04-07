@@ -52,4 +52,7 @@ public interface ContentService {
     
     //获取随机视频（不排重）
     List<Content> getRandomVideosWithoutExclude(int count);
+    
+    // 获取收藏夹中的视频列表
+    PageResult<Content> getFavoriteVideos(Long favoriteId, Integer rule, Integer page, Integer quantity);
 }

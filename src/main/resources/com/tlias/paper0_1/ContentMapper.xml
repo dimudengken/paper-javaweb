@@ -11,55 +11,59 @@
         <result column="title" property="title" />
         <result column="description" property="description" />
         <result column="create_time" property="create_time" />
-        <result column="user_id" property="user_id" />
-        <result column="nickname" property="nickname" />
-        <result column="avatar" property="avatar" />
+        <result column="author_id" property="author_id" />
+        <result column="nick_name" property="nick_name" />
+<!--        <result column="avatar" property="avatar" />-->
         <result column="video_url" property="video_url" />
         <result column="video_cover_url" property="video_cover_url" />
         <result column="liked_count" property="liked_count" />
         <result column="disliked_count" property="disliked_count" />
         <result column="video_play_count" property="video_play_count" />
+        <result column="video_favorite_count" property="video_favorite_count" />
+        <result column="video_share_count" property="video_share_count" />
+        <result column="video_coin_count" property="video_coin_count" />
+        <result column="status" property="status" />
     </resultMap>
     
     <!-- 查询所有视频内容 -->
     <select id="getAllContents" resultMap="contentMap">
-        select video_id, video_type, title, description, create_time, user_id, nickname, avatar, video_url, video_cover_url, liked_count, disliked_count, video_play_count
-        from video_data
+        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status
+        from videos
     </select>
 
     <!-- 根据ID查询单个视频内容 -->
     <select id="getContentById" parameterType="String" resultMap="contentMap">
-        select video_id, video_type, title, description, create_time, user_id, nickname, avatar, video_url, video_cover_url, liked_count, disliked_count, video_play_count
-        from video_data
+        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status
+        from videos
         where video_id = #{id}
         limit 1
     </select>
 
     <!-- 分页查询视频内容 -->
     <select id="getContentByPage" resultMap="contentMap">
-        select video_id, video_type, title, description, create_time, user_id, nickname, avatar, video_url, video_cover_url, liked_count, disliked_count, video_play_count
-        from video_data
+        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status
+        from videos
         order by create_time desc
         limit #{offset}, #{size}
     </select>
 
     <!-- 查询视频内容总数 -->
     <select id="getContentCount" resultType="long">
-        select count(*) from video_data
+        select count(*) from videos
     </select>
 
     <!-- 根据标题模糊查询视频内容 -->
     <select id="getContentByTitle" resultMap="contentMap">
-        select video_id, video_type, title, description, create_time, user_id, nickname, avatar, video_url, video_cover_url, liked_count, disliked_count, video_play_count
-        from video_data
+        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status
+        from videos
         where title LIKE CONCAT('%', #{title}, '%')
         order by create_time desc
     </select>
 
     <!-- 根据标题模糊查询视频内容（分页） -->
     <select id="getContentByTitleAndPage" resultMap="contentMap">
-        select video_id, video_type, title, description, create_time, user_id, nickname, avatar, video_url, video_cover_url, liked_count, disliked_count, video_play_count
-        from video_data
+        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status
+        from videos
         where title LIKE CONCAT('%', #{title}, '%')
         order by create_time desc
         limit #{offset}, #{size}
@@ -67,28 +71,28 @@
 
     <!-- 根据标题查询视频内容总数 -->
     <select id="getContentCountByTitle" resultType="long">
-        select count(*) from video_data
+        select count(*) from videos
         where title LIKE CONCAT('%', #{title}, '%')
     </select>
 
     <!-- 更新视频内容的点赞数量 -->
     <update id="updateLikedCount">
-        UPDATE video_data
+        UPDATE videos
         SET liked_count = liked_count + #{count}
         WHERE video_id = #{videoId}
     </update>
     
     <!-- 更新视频内容的不喜欢数量 -->
     <update id="updateDislikedCount">
-        UPDATE video_data
+        UPDATE videos
         SET disliked_count = disliked_count + #{count}
         WHERE video_id = #{videoId}
     </update>
     
     <!-- 获取热门视频列表（按点赞数排序） -->
     <select id="getHotVideos" resultMap="contentMap">
-        select video_id, video_type, title, description, create_time, user_id, nickname, avatar, video_url, video_cover_url, liked_count, disliked_count, video_play_count
-        from video_data
+        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status
+        from videos
         order by liked_count desc, create_time desc
         limit #{offset}, #{size}
     </select>
@@ -96,9 +100,8 @@
     <!--随机查询视频-->
     <select id="selectRandomVideos" resultMap="contentMap">
         SELECT 
-        video_id, video_type, title, description, create_time, user_id, nickname, avatar, 
-        video_url, video_cover_url, liked_count, disliked_count, video_play_count
-        FROM video_data
+        video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status
+        FROM videos_hot
         <where>
             <if test="excludeIds != null and excludeIds.size() > 0">
                 video_id NOT IN 
@@ -111,10 +114,10 @@
         LIMIT #{count}
     </select>
     
-    <!--获取视频总记录数（排除指定ID后）-->
+    <!--获取视频总记录数（排除指定 ID 后）-->
     <select id="getTotalVideoCount" resultType="long">
         SELECT COUNT(*)
-        FROM video_data
+        FROM videos_hot
         <where>
             <if test="excludeIds != null and excludeIds.size() > 0">
                 video_id NOT IN 
@@ -123,6 +126,59 @@
                 </foreach>
             </if>
         </where>
+    </select>
+    
+    <!-- 更新视频统计数据 -->
+    <update id="updateVideoStats">
+        UPDATE videos
+        SET
+            liked_count = #{likedCount},
+            video_favorite_count = #{favoriteCount},
+            video_share_count = #{shareCount},
+            video_coin_count = #{coinCount},
+            video_play_count = #{viewCount}
+        WHERE video_id = #{videoId}
+    </update>
+    
+    <!-- 获取收藏夹中的视频列表 -->
+    <select id="getFavoriteVideos" resultMap="contentMap">
+        SELECT 
+            vd.video_id,
+            vd.video_type,
+            vd.title,
+            vd.description,
+            vd.create_time,
+            vd.author_id,
+            vd.nick_name,
+            vd.video_url,
+            vd.video_cover_url,
+            vd.liked_count,
+            vd.disliked_count,
+            vd.video_play_count,
+            vd.video_favorite_count,
+            vd.video_share_count,
+            vd.video_coin_count,
+            vd.status
+        FROM videos vd
+        WHERE 1=1
+        <choose>
+            <when test="rule == 2">
+                ORDER BY vd.video_play_count DESC, vd.create_time DESC
+            </when>
+            <when test="rule == 3">
+                ORDER BY vd.liked_count DESC, vd.create_time DESC
+            </when>
+            <otherwise>
+                ORDER BY vd.create_time DESC
+            </otherwise>
+        </choose>
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <!-- 统计收藏夹中的视频数量 -->
+    <select id="countFavoriteVideos" resultType="long">
+        SELECT COUNT(*) 
+        FROM videos
     </select>
 
 
