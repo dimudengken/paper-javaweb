@@ -55,4 +55,10 @@ public interface ContentService {
     
     // 获取收藏夹中的视频列表
     PageResult<Content> getFavoriteVideos(Long favoriteId, Integer rule, Integer page, Integer quantity);
+    
+    // 根据source_keyword查询视频列表
+    List<Content> getVideosBySourceKeyword(String sourceKeyword, int size);
+    
+    // 根据视频ID推荐相关视频
+    List<Content> getRecommendedVideosByVideoId(String videoId, int size);
 }

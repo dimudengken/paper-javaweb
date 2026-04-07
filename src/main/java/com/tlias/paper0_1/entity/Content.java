@@ -25,6 +25,7 @@ public class Content {
     private long video_favorite_count;
     private long video_coin_count;
     private String status;
+    private String source_keyword;
 
 
 }

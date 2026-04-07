@@ -23,17 +23,18 @@
         <result column="video_share_count" property="video_share_count" />
         <result column="video_coin_count" property="video_coin_count" />
         <result column="status" property="status" />
+        <result column="source_keyword" property="source_keyword" />
     </resultMap>
     
     <!-- 查询所有视频内容 -->
     <select id="getAllContents" resultMap="contentMap">
-        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status
+        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status, source_keyword
         from videos
     </select>
 
     <!-- 根据ID查询单个视频内容 -->
     <select id="getContentById" parameterType="String" resultMap="contentMap">
-        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status
+        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status, source_keyword
         from videos
         where video_id = #{id}
         limit 1
@@ -41,7 +42,7 @@
 
     <!-- 分页查询视频内容 -->
     <select id="getContentByPage" resultMap="contentMap">
-        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status
+        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status, source_keyword
         from videos
         order by create_time desc
         limit #{offset}, #{size}
@@ -54,7 +55,7 @@
 
     <!-- 根据标题模糊查询视频内容 -->
     <select id="getContentByTitle" resultMap="contentMap">
-        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status
+        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status, source_keyword
         from videos
         where title LIKE CONCAT('%', #{title}, '%')
         order by create_time desc
@@ -62,7 +63,7 @@
 
     <!-- 根据标题模糊查询视频内容（分页） -->
     <select id="getContentByTitleAndPage" resultMap="contentMap">
-        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status
+        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status, source_keyword
         from videos
         where title LIKE CONCAT('%', #{title}, '%')
         order by create_time desc
@@ -89,18 +90,19 @@
         WHERE video_id = #{videoId}
     </update>
     
-    <!-- 获取热门视频列表（按点赞数排序） -->
-    <select id="getHotVideos" resultMap="contentMap">
-        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status
+    <!-- 按视频类型查询热门视频 -->
+    <select id="getHotVideoByVideoType" resultMap="contentMap">
+        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status, source_keyword
         from videos
-        order by liked_count desc, create_time desc
+        where video_type = #{videoType}
+        order by video_play_count desc
         limit #{offset}, #{size}
     </select>
 
     <!--随机查询视频-->
     <select id="selectRandomVideos" resultMap="contentMap">
         SELECT 
-        video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status
+        video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status, source_keyword
         FROM videos_hot
         <where>
             <if test="excludeIds != null and excludeIds.size() > 0">
@@ -179,6 +181,18 @@
     <select id="countFavoriteVideos" resultType="long">
         SELECT COUNT(*) 
         FROM videos
+    </select>
+    
+    <!-- 根据source_keyword查询视频列表 -->
+    <select id="getVideosBySourceKeyword" resultMap="contentMap">
+        SELECT 
+            video_id, video_type, title, description, create_time, author_id, nick_name, 
+            video_url, video_cover_url, liked_count, disliked_count, video_play_count, 
+            video_favorite_count, video_share_count, video_coin_count, status, source_keyword
+        FROM videos
+        WHERE source_keyword = #{sourceKeyword}
+        ORDER BY create_time DESC
+        LIMIT #{size, jdbcType=INTEGER}
     </select>
 
 

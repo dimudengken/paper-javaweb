@@ -42,4 +42,21 @@ public class RecommendController {
         HotVideoResponse hotVideoResponse = contentService.getHotVideos(currentPage, pageSize);
         return Content_Result.success("获取热门视频成功", hotVideoResponse);
     }
+    
+    /**
+     * 根据视频ID推荐相关视频
+     * HTTP GET请求 /api/recommend/keyword
+     * 根据视频ID获取其source_keyword，然后返回相同source_keyword的视频列表
+     * 
+     * @param videoId 视频ID
+     * @param size 返回数量
+     * @return 视频列表
+     */
+    @GetMapping("/keyword")
+    public Content_Result<List<Content>> getVideosByKeyword(
+            @RequestParam("videoId") String videoId,
+            @RequestParam(defaultValue = "10") Integer size) {
+        List<Content> videos = contentService.getRecommendedVideosByVideoId(videoId, size);
+        return Content_Result.success("获取推荐视频成功", videos);
+    }
 }

@@ -136,4 +136,12 @@ public interface ContentMapper {
      * 统计收藏夹中的视频数量
      */
     long countFavoriteVideos(@Param("favoriteId") Long favoriteId);
+    
+    /**
+     * 根据source_keyword查询视频列表
+     * @param sourceKeyword 关键词
+     * @param size 返回数量
+     * @return 匹配的视频列表
+     */
+    List<Content> getVideosBySourceKeyword(@Param("sourceKeyword") String sourceKeyword, @Param("size") int size);
 }

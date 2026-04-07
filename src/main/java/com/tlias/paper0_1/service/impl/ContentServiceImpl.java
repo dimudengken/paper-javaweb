@@ -264,4 +264,30 @@ public class ContentServiceImpl implements ContentService {
         
         return result;
     }
+    
+    @Override
+    public List<Content> getVideosBySourceKeyword(String sourceKeyword, int size) {
+        return contentMapper.getVideosBySourceKeyword(sourceKeyword, size);
+    }
+    
+    @Override
+    public List<Content> getRecommendedVideosByVideoId(String videoId, int size) {
+        // 根据视频ID获取视频信息
+        Content video = contentMapper.getContentById(videoId);
+        if (video == null || video.getSource_keyword() == null) {
+            return null;
+        }
+        
+        // 根据source_keyword查询视频，限制返回数量
+        List<Content> videos = contentMapper.getVideosBySourceKeyword(video.getSource_keyword(), size + 1); // 多查一个，用于排除当前视频
+        
+        // 排除当前视频
+        if (videos != null) {
+            return videos.stream()
+                .filter(v -> !v.getVideo_id().equals(videoId)) // 排除当前视频
+                .toList();
+        }
+        
+        return null;
+    }
 }
