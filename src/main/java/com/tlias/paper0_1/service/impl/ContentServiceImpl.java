@@ -4,11 +4,14 @@ import com.tlias.paper0_1.entity.Content;
 import com.tlias.paper0_1.entity.Content_Result;
 import com.tlias.paper0_1.entity.HotVideoResponse;
 import com.tlias.paper0_1.entity.PageResult;
+import com.tlias.paper0_1.entity.UserRecommendation;
 import com.tlias.paper0_1.mapper.ContentMapper;
+import com.tlias.paper0_1.mapper.UserRecommendationMapper;
 import com.tlias.paper0_1.service.ContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -26,6 +29,14 @@ public class ContentServiceImpl implements ContentService {
      */
     @Autowired
     private ContentMapper contentMapper;
+
+    /**
+     * 用户推荐数据访问对象
+     * 通过Spring的@Autowired注解自动注入UserRecommendationMapper实例
+     * 用于执行与用户推荐数据相关的数据库操作
+     */
+    @Autowired
+    private UserRecommendationMapper userRecommendationMapper;
 
     /**
      * 获取所有视频内容信息
@@ -289,5 +300,64 @@ public class ContentServiceImpl implements ContentService {
         }
         
         return null;
+    }
+    
+    @Override
+    public List<Content> getPersonalizedRecommendations(int userId) {
+        System.out.println("=== 个性化推荐调试信息 ===");
+        System.out.println("用户ID: " + userId);
+        System.out.println("用户ID类型: int");
+        
+        // 尝试直接执行SQL查询
+        try {
+            // 打印执行的SQL语句
+            System.out.println("执行SQL: SELECT user_id, video_list FROM user_recommendations WHERE user_id = " + userId + " LIMIT 1");
+            
+            // 根据用户ID查询推荐记录
+            UserRecommendation recommendation = userRecommendationMapper.selectByUserId(userId);
+            System.out.println("推荐记录: " + recommendation);
+            
+            if (recommendation == null) {
+                System.out.println("推荐记录为null");
+            } else {
+                System.out.println("推荐记录user_id: " + recommendation.getUser_id());
+                System.out.println("推荐记录video_list: " + recommendation.getVideo_list());
+            }
+            
+            if (recommendation == null || recommendation.getVideo_list() == null || recommendation.getVideo_list().isEmpty()) {
+                System.out.println("未找到推荐记录或video_list为空");
+                return new java.util.ArrayList<>();
+            }
+            
+            // 解析video_list（逗号分隔的视频ID字符串）
+            String videoList = recommendation.getVideo_list();
+            System.out.println("原始video_list: " + videoList);
+            
+            String[] videoIds = videoList.split(",");
+            System.out.println("分割后的videoIds数量: " + videoIds.length);
+            
+            // 根据视频ID列表查询视频内容
+            List<Content> videos = new java.util.ArrayList<>();
+            for (String videoId : videoIds) {
+                if (videoId != null && !videoId.trim().isEmpty()) {
+                    String trimmedId = videoId.trim();
+                    System.out.println("查询视频ID: " + trimmedId);
+                    Content video = contentMapper.getContentById(trimmedId);
+                    System.out.println("查询结果: " + video);
+                    if (video != null) {
+                        videos.add(video);
+                        System.out.println("添加视频到结果列表: " + video.getVideo_id());
+                    }
+                }
+            }
+            
+            System.out.println("最终返回视频数量: " + videos.size());
+            System.out.println("=== 调试信息结束 ===");
+            return videos;
+        } catch (Exception e) {
+            System.out.println("查询推荐记录时发生异常: " + e.getMessage());
+            e.printStackTrace();
+            return new java.util.ArrayList<>();
+        }
     }
 }

@@ -59,4 +59,18 @@ public class RecommendController {
         List<Content> videos = contentService.getRecommendedVideosByVideoId(videoId, size);
         return Content_Result.success("获取推荐视频成功", videos);
     }
+    
+    /**
+     * 获取个性化推荐视频
+     * HTTP GET请求 /api/recommend/individuation
+     * 根据用户ID在user_recommendation表中查找video_list，然后根据video_list查询videos表返回content数据
+     * 
+     * @param userId 用户ID
+     * @return 视频列表
+     */
+    @GetMapping("/individuation")
+    public Content_Result<List<Content>> getPersonalizedRecommendations(@RequestParam("userId") int userId) {
+        List<Content> videos = contentService.getPersonalizedRecommendations(userId);
+        return Content_Result.success("获取个性化推荐视频成功", videos);
+    }
 }

@@ -61,4 +61,7 @@ public interface ContentService {
     
     // 根据视频ID推荐相关视频
     List<Content> getRecommendedVideosByVideoId(String videoId, int size);
+    
+    // 获取个性化推荐视频
+    List<Content> getPersonalizedRecommendations(int userId);
 }
