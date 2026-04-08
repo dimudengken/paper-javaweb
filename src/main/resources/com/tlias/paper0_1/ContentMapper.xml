@@ -90,6 +90,14 @@
         WHERE video_id = #{videoId}
     </update>
     
+    <!-- 获取热门视频列表（按点赞数排序） -->
+    <select id="getHotVideos" resultMap="contentMap">
+        select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status, source_keyword
+        from videos
+        order by liked_count desc
+        limit #{offset}, #{size}
+    </select>
+    
     <!-- 按视频类型查询热门视频 -->
     <select id="getHotVideoByVideoType" resultMap="contentMap">
         select video_id, video_type, title, description, create_time, author_id, nick_name, video_url, video_cover_url, liked_count, disliked_count, video_play_count, video_favorite_count, video_share_count, video_coin_count, status, source_keyword
